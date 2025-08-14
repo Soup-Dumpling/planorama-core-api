@@ -1,0 +1,31 @@
+name: .NET Workflow
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+    paths:
+      - "src/**"
+      - "Planorama.sln"
+      - "tests/**"
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 8.x
+
+      - name: Install dependencies
+        run: dotnet restore Planorama.sln
+      - name: Build
+        run: dotnet build --configuration Release --no-restore Planorama.sln
+      - name: Test
+        run: dotnet test --no-restore --verbosity normal Planorama.sln
