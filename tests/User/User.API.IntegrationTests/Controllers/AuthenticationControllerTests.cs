@@ -1,6 +1,5 @@
 ﻿using Alba;
 using FizzWare.NBuilder;
-using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
 using Planorama.User.API.IntegrationTests.Extentions;
 using Planorama.User.API.Models.Authentication;
@@ -8,7 +7,6 @@ using Planorama.User.Core.Constants;
 using Planorama.User.Core.Models;
 using Planorama.User.Core.UseCases.User.GetLoggedInUser;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;

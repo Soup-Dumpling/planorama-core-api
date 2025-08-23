@@ -1,29 +1,29 @@
 ﻿using FizzWare.NBuilder;
+using Microsoft.EntityFrameworkCore;
 using Models = Planorama.User.Core.Models;
+using Planorama.User.Core.UseCases.Authentication.RefreshTokens;
 using Planorama.User.Infrastructure.Repository.Authentication;
 using System;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
-using Planorama.User.Core.UseCases.Authentication.LoginUser;
-using Microsoft.EntityFrameworkCore;
-using System.Text.Json;
 
 namespace Planorama.User.Infrastructure.UnitTests.Repository.Authentication
 {
-    public class LoginUserRepositoryUnitTests
+    public class RefreshTokensRepositoryUnitTests
     {
         private readonly UserDBContext context;
-        private LoginUserRepository loginUserRepository;
+        private RefreshTokensRepository refreshTokensRepository;
 
-        public LoginUserRepositoryUnitTests()
+        public RefreshTokensRepositoryUnitTests()
         {
             context = Helpers.InMemoryContextHelper.GetContext();
-            loginUserRepository = new LoginUserRepository(context);
+            refreshTokensRepository = new RefreshTokensRepository(context);
         }
 
         [Fact]
-        public async Task ValidAddRefreshToken()
+        public async Task ValidUpdateRefreshToken()
         {
             //Arrange
             var fakeUser = Builder<Models.User>.CreateNew().Build();
@@ -33,25 +33,27 @@ namespace Planorama.User.Infrastructure.UnitTests.Repository.Authentication
                     x.UserId = fakeUser.Id;
                     x.EmailAddress = "user.testing@outlook.com";
                     x.HashedPassword = "Gt9Yc4AiIvmsC1QQbe2RZsCIqvoYlst2xbz0Fs8aHnw=";
+                    x.RefreshToken = "WTkh8E7Zgq/l8sqs7yaCUnWXROXyBejV5khykyZlZzoYrGiulKGNqWcwRX5u/WUxWEeXt4M2QeMcImWbw8PlSA==";
+                    x.RefreshTokenExpiresAtUtc = DateTime.UtcNow.AddDays(2);
                 })
                 .Build();
-            var fakeRefreshToken = "jkWV:\\z;i82O)1=jD#v2etCZ{bH/sc6ku\"/p3VViTE8!mufZBhA-iXiFPwcrU]Qsf{Ldj4D{jWud**cQg7\"=-OB-";
-            var fakeRefreshTokenExpiresAtUtc = DateTime.UtcNow.AddDays(7);
             context.Users.Add(fakeUser);
             context.UserCredentials.Add(fakeUserCredential);
             await context.SaveChangesAsync();
 
-            var expectedEvent = new UserLoggedInEvent(fakeUser.Id, fakeRefreshToken, fakeRefreshTokenExpiresAtUtc);
+            var updatedRefreshToken = "T4jhzPQ3hI+C0LXLI91OCV5/QGdkNPDuLrJ7L4VXYHzluJUqjY/7uWs1Hk3MoZUM3ObXA6ikyWrpddX7q7frKA==";
+            var updatedRefreshTokenExpiresAtUtc = DateTime.UtcNow.AddDays(7);
+            var expectedEvent = new TokensUpdatedEvent(fakeUser.Id, updatedRefreshToken, updatedRefreshTokenExpiresAtUtc);
 
             //Act
-            var result = await loginUserRepository.AddRefreshTokenAsync(fakeUser.Id, fakeRefreshToken, fakeRefreshTokenExpiresAtUtc, "user.testing@outlook.com");
+            var result = await refreshTokensRepository.UpdateRefreshTokenAsync(fakeUser.Id, updatedRefreshToken, updatedRefreshTokenExpiresAtUtc, "user.testing@outlook.com");
 
             //Assert
             var count = await context.UserCredentials.CountAsync();
             Assert.Equal(expectedEvent, result);
             var user = await context.Users.FindAsync(fakeUser.Id);
             var createdEvent = context.IntegrationEvents.SingleOrDefault(x => x.Username == "user.testing@outlook.com" && x.AggregationId == fakeUser.Id.ToString());
-            var createdEventData = JsonSerializer.Deserialize<UserLoggedInEvent>(createdEvent.Data);
+            var createdEventData = JsonSerializer.Deserialize<TokensUpdatedEvent>(createdEvent.Data);
             Assert.Equal(result.Id, user.UserCredential.UserId);
             Assert.Equal(result.RefreshToken, user.UserCredential.RefreshToken);
             Assert.Equal(result.RefreshTokenExpiresAtUtc, user.UserCredential.RefreshTokenExpiresAtUtc);
@@ -62,7 +64,7 @@ namespace Planorama.User.Infrastructure.UnitTests.Repository.Authentication
         }
 
         [Fact]
-        public async Task ValidFindUserCredentialByEmail()
+        public async Task ValidFindUserCredentialByRefreshToken()
         {
             //Arrange
             var fakeUser = Builder<Models.User>.CreateNew().Build();
@@ -72,6 +74,8 @@ namespace Planorama.User.Infrastructure.UnitTests.Repository.Authentication
                     x.UserId = fakeUser.Id;
                     x.EmailAddress = "user.testing@outlook.com";
                     x.HashedPassword = "Gt9Yc4AiIvmsC1QQbe2RZsCIqvoYlst2xbz0Fs8aHnw=";
+                    x.RefreshToken = "WTkh8E7Zgq/l8sqs7yaCUnWXROXyBejV5khykyZlZzoYrGiulKGNqWcwRX5u/WUxWEeXt4M2QeMcImWbw8PlSA==";
+                    x.RefreshTokenExpiresAtUtc = DateTime.UtcNow.AddDays(2);
                 })
                 .Build();
             context.Users.Add(fakeUser);
@@ -79,7 +83,7 @@ namespace Planorama.User.Infrastructure.UnitTests.Repository.Authentication
             await context.SaveChangesAsync();
 
             //Act
-            var result = await loginUserRepository.FindUserCredentialByEmailAsync(fakeUserCredential.EmailAddress);
+            var result = await refreshTokensRepository.FindUserCredentialByRefreshTokenAsync(fakeUserCredential.RefreshToken);
 
             //Assert
             Assert.NotNull(result);
@@ -87,7 +91,7 @@ namespace Planorama.User.Infrastructure.UnitTests.Repository.Authentication
         }
 
         [Fact]
-        public async Task InvalidFindUserCredentialByEmail()
+        public async Task InvalidFindUserCredentialByRefreshToken()
         {
             //Arrange
             var fakeUser = Builder<Models.User>.CreateNew().Build();
@@ -97,14 +101,13 @@ namespace Planorama.User.Infrastructure.UnitTests.Repository.Authentication
                     x.UserId = fakeUser.Id;
                     x.EmailAddress = "user.testing@outlook.com";
                     x.HashedPassword = "Gt9Yc4AiIvmsC1QQbe2RZsCIqvoYlst2xbz0Fs8aHnw=";
+                    x.RefreshToken = "WTkh8E7Zgq/l8sqs7yaCUnWXROXyBejV5khykyZlZzoYrGiulKGNqWcwRX5u/WUxWEeXt4M2QeMcImWbw8PlSA==";
+                    x.RefreshTokenExpiresAtUtc = DateTime.UtcNow.AddDays(2);
                 })
                 .Build();
-            context.Users.Add(fakeUser);
-            context.UserCredentials.Add(fakeUserCredential);
-            await context.SaveChangesAsync();
 
             //Act
-            var result = await loginUserRepository.FindUserCredentialByEmailAsync("userDoesNotExist.testing@outlook.com");
+            var result = await refreshTokensRepository.FindUserCredentialByRefreshTokenAsync(fakeUserCredential.RefreshToken);
 
             //Assert
             Assert.Null(result);
@@ -119,7 +122,7 @@ namespace Planorama.User.Infrastructure.UnitTests.Repository.Authentication
             await context.SaveChangesAsync();
 
             //Act
-            var result = await loginUserRepository.GetUserFullNameByIdAsync(fakeUser.Id);
+            var result = await refreshTokensRepository.GetUserFullNameByIdAsync(fakeUser.Id);
 
             //Assert
             Assert.Equal(result, $"{fakeUser.FirstName} {fakeUser.LastName}");
@@ -194,7 +197,7 @@ namespace Planorama.User.Infrastructure.UnitTests.Repository.Authentication
             var expectedResult = roles.Select(x => x.IdentityName);
 
             //Act
-            var result = await loginUserRepository.GetUserRolesByIdAsync(fakeUser.Id);
+            var result = await refreshTokensRepository.GetUserRolesByIdAsync(fakeUser.Id);
 
             //Assert
             var count = result.Count();
