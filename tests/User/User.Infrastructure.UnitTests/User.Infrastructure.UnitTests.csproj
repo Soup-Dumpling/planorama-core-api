@@ -21,8 +21,4 @@
     <ItemGroup>
         <ProjectReference Include="..\..\..\src\User\User.Infrastructure\User.Infrastructure.csproj" />
     </ItemGroup>
-    <ItemGroup>
-      <Folder Include="Repository\User\" />
-      <Folder Include="Repository\PrivacySetting\" />
-    </ItemGroup>
 </Project>

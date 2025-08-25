@@ -1,28 +1,60 @@
 ﻿using FizzWare.NBuilder;
 using Models = Planorama.User.Core.Models;
-using Planorama.User.Core.UseCases.Authentication.LogoutUser;
-using Planorama.User.Infrastructure.Repository.Authentication;
+using Planorama.User.Infrastructure.Repository.PrivacySetting;
 using System;
-using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Planorama.User.Infrastructure.UnitTests.Repository.Authentication
+namespace Planorama.User.Infrastructure.UnitTests.Repository.PrivacySetting
 {
-    public class LogoutUserRepositoryUnitTests
+    public class GetPrivacySettingRepositoryUnitTests
     {
         private readonly UserDBContext context;
-        private LogoutUserRepository logoutUserRepository;
+        private GetPrivacySettingRepository getPrivacySettingRepository;
 
-        public LogoutUserRepositoryUnitTests()
+        public GetPrivacySettingRepositoryUnitTests() 
         {
             context = Helpers.InMemoryContextHelper.GetContext();
-            logoutUserRepository = new LogoutUserRepository(context);
+            getPrivacySettingRepository = new GetPrivacySettingRepository(context);
         }
 
         [Fact]
-        public async Task ValidReplaceUserCredential()
+        public async Task ValidGetUserPrivacySettingById()
+        {
+            //Arrange
+            var fakeUser = Builder<Models.User>.CreateNew().Build();
+            var fakeUserCredential = Builder<Models.UserCredential>.CreateNew()
+                .Do(x =>
+                {
+                    x.UserId = fakeUser.Id;
+                    x.EmailAddress = "user.testing@outlook.com";
+                    x.HashedPassword = "Gt9Yc4AiIvmsC1QQbe2RZsCIqvoYlst2xbz0Fs8aHnw=";
+                    x.RefreshToken = "jkWV:\\z;i82O)1=jD#v2etCZ{bH/sc6ku\"/p3VViTE8!mufZBhA-iXiFPwcrU]Qsf{Ldj4D{jWud**cQg7\"=-OB-";
+                    x.RefreshTokenExpiresAtUtc = DateTime.UtcNow.AddDays(7);
+                })
+                .Build();
+            var fakeUserPrivacySetting = Builder<Models.UserPrivacySetting>.CreateNew()
+                .Do(x =>
+                {
+                    x.UserId = fakeUser.Id;
+                    x.IsPrivate = false;
+                }).Build();
+            context.Users.Add(fakeUser);
+            context.UserCredentials.Add(fakeUserCredential);
+            context.UserPrivacySettings.Add(fakeUserPrivacySetting);
+            await context.SaveChangesAsync();
+
+            //Act
+            var result = await getPrivacySettingRepository.GetUserPrivacySettingByIdAsync(fakeUser.Id);
+
+            //Assert
+            Assert.NotNull(result);
+            Assert.Equal(fakeUser.Id, result.UserId);
+            Assert.False(result.IsPrivate);
+        }
+
+        [Fact]
+        public async Task ValidGetUserIdByEmail()
         {
             //Arrange
             var fakeUser = Builder<Models.User>.CreateNew().Build();
@@ -40,52 +72,16 @@ namespace Planorama.User.Infrastructure.UnitTests.Repository.Authentication
             context.UserCredentials.Add(fakeUserCredential);
             await context.SaveChangesAsync();
 
-            var expectedEvent = new UserLoggedOutEvent(fakeUser.Id);
-
             //Act
-            var result = await logoutUserRepository.ReplaceUserCredentialAsync(fakeUser.Id, "user.testing@outlook.com");
+            var result = await getPrivacySettingRepository.GetUserIdByEmailAsync(fakeUserCredential.EmailAddress);
 
             //Assert
-            Assert.Equal(expectedEvent, result);
-            var userCredential = await context.UserCredentials.FindAsync(fakeUser.Id);
-            var createdEvent = context.IntegrationEvents.SingleOrDefault(x => x.Username == "user.testing@outlook.com" && x.AggregationId == fakeUser.Id.ToString());
-            var createdEventData = JsonSerializer.Deserialize<UserLoggedOutEvent>(createdEvent.Data);
-            Assert.Equal(result.Id, userCredential.UserId);
-            Assert.Equal(fakeUserCredential.EmailAddress, userCredential.EmailAddress);
-            Assert.Equal(fakeUserCredential.HashedPassword, userCredential.HashedPassword);
-            Assert.Equal(expectedEvent.Id, createdEventData.Id);
-            Assert.Null(userCredential.RefreshToken);
-            Assert.Null(userCredential.RefreshTokenExpiresAtUtc);
+            Assert.NotNull(result);
+            Assert.Equal(fakeUser.Id, result);
         }
 
         [Fact]
-        public async Task ValidCheckIfUserCredentialExists()
-        {
-            //Arrange
-            var fakeUser = Builder<Models.User>.CreateNew().Build();
-            var fakeUserCredential = Builder<Models.UserCredential>.CreateNew()
-                .Do(x =>
-                {
-                    x.UserId = fakeUser.Id;
-                    x.EmailAddress = "user.testing@outlook.com";
-                    x.HashedPassword = "Gt9Yc4AiIvmsC1QQbe2RZsCIqvoYlst2xbz0Fs8aHnw=";
-                    x.RefreshToken = "jkWV:\\z;i82O)1=jD#v2etCZ{bH/sc6ku\"/p3VViTE8!mufZBhA-iXiFPwcrU]Qsf{Ldj4D{jWud**cQg7\"=-OB-";
-                    x.RefreshTokenExpiresAtUtc = DateTime.UtcNow.AddDays(7);
-                })
-                .Build();
-            context.Users.Add(fakeUser);
-            context.UserCredentials.Add(fakeUserCredential);
-            await context.SaveChangesAsync();
-
-            //Act
-            var result = await logoutUserRepository.CheckIfUserCredentialExistsAsync(fakeUser.Id);
-
-            //Assert
-            Assert.True(result);
-        }
-
-        [Fact]
-        public async Task InvalidCheckIfUserCredentialExists()
+        public async Task InvalidGetUserIdByEmail()
         {
             //Arrange
             var fakeUser = Builder<Models.User>.CreateNew().Build();
@@ -101,10 +97,10 @@ namespace Planorama.User.Infrastructure.UnitTests.Repository.Authentication
                 .Build();
 
             //Act
-            var result = await logoutUserRepository.CheckIfUserCredentialExistsAsync(fakeUser.Id);
+            var result = await getPrivacySettingRepository.GetUserIdByEmailAsync(fakeUserCredential.EmailAddress);
 
             //Assert
-            Assert.False(result);
+            Assert.Null(result);
         }
     }
 }

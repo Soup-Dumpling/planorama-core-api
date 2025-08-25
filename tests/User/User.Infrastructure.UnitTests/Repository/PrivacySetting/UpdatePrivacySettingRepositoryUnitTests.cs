@@ -1,28 +1,29 @@
 ﻿using FizzWare.NBuilder;
-using Models = Planorama.User.Core.Models;
-using Planorama.User.Core.UseCases.Authentication.LogoutUser;
-using Planorama.User.Infrastructure.Repository.Authentication;
+using Microsoft.EntityFrameworkCore;
+using Planorama.User.Core.UseCases.PrivacySetting.UpdatePrivacySetting;
+using Planorama.User.Infrastructure.Repository.PrivacySetting;
 using System;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
+using Models = Planorama.User.Core.Models;
 
-namespace Planorama.User.Infrastructure.UnitTests.Repository.Authentication
+namespace Planorama.User.Infrastructure.UnitTests.Repository.PrivacySetting
 {
-    public class LogoutUserRepositoryUnitTests
+    public class UpdatePrivacySettingRepositoryUnitTests
     {
         private readonly UserDBContext context;
-        private LogoutUserRepository logoutUserRepository;
+        private UpdatePrivacySettingRepository updatePrivacySettingRepository;
 
-        public LogoutUserRepositoryUnitTests()
+        public UpdatePrivacySettingRepositoryUnitTests()
         {
             context = Helpers.InMemoryContextHelper.GetContext();
-            logoutUserRepository = new LogoutUserRepository(context);
+            updatePrivacySettingRepository = new UpdatePrivacySettingRepository(context);
         }
 
         [Fact]
-        public async Task ValidReplaceUserCredential()
+        public async Task ValidUpdatePrivacySetting()
         {
             //Arrange
             var fakeUser = Builder<Models.User>.CreateNew().Build();
@@ -36,56 +37,93 @@ namespace Planorama.User.Infrastructure.UnitTests.Repository.Authentication
                     x.RefreshTokenExpiresAtUtc = DateTime.UtcNow.AddDays(7);
                 })
                 .Build();
+            var fakeUserPrivacySetting = Builder<Models.UserPrivacySetting>.CreateNew()
+                .Do(x =>
+                {
+                    x.UserId = fakeUser.Id;
+                    x.IsPrivate = false;
+                }).Build();
             context.Users.Add(fakeUser);
             context.UserCredentials.Add(fakeUserCredential);
+            context.UserPrivacySettings.Add(fakeUserPrivacySetting);
             await context.SaveChangesAsync();
 
-            var expectedEvent = new UserLoggedOutEvent(fakeUser.Id);
+            var expectedEvent = new PrivacySettingUpdatedEvent(fakeUser.Id, true);
 
             //Act
-            var result = await logoutUserRepository.ReplaceUserCredentialAsync(fakeUser.Id, "user.testing@outlook.com");
+            var result = await updatePrivacySettingRepository.UpdatePrivacySettingAsync(fakeUser.Id, true, "user.testing@outlook.com");
 
             //Assert
+            var count = await context.UserPrivacySettings.CountAsync();
             Assert.Equal(expectedEvent, result);
-            var userCredential = await context.UserCredentials.FindAsync(fakeUser.Id);
+            var userPrivacySetting = await context.UserPrivacySettings.FindAsync(fakeUser.Id);
             var createdEvent = context.IntegrationEvents.SingleOrDefault(x => x.Username == "user.testing@outlook.com" && x.AggregationId == fakeUser.Id.ToString());
-            var createdEventData = JsonSerializer.Deserialize<UserLoggedOutEvent>(createdEvent.Data);
-            Assert.Equal(result.Id, userCredential.UserId);
-            Assert.Equal(fakeUserCredential.EmailAddress, userCredential.EmailAddress);
-            Assert.Equal(fakeUserCredential.HashedPassword, userCredential.HashedPassword);
+            var createdEventData = JsonSerializer.Deserialize<PrivacySettingUpdatedEvent>(createdEvent.Data);
+            Assert.Equal(result.Id, userPrivacySetting.UserId);
+            Assert.True(result.IsPrivate);
+            Assert.True(userPrivacySetting.IsPrivate);
             Assert.Equal(expectedEvent.Id, createdEventData.Id);
-            Assert.Null(userCredential.RefreshToken);
-            Assert.Null(userCredential.RefreshTokenExpiresAtUtc);
+            Assert.Equal(expectedEvent.IsPrivate, createdEventData.IsPrivate);
+            Assert.Equal(1, count);
         }
 
         [Fact]
-        public async Task ValidCheckIfUserCredentialExists()
+        public async Task ValidCheckIfUserExists()
         {
             //Arrange
             var fakeUser = Builder<Models.User>.CreateNew().Build();
-            var fakeUserCredential = Builder<Models.UserCredential>.CreateNew()
-                .Do(x =>
-                {
-                    x.UserId = fakeUser.Id;
-                    x.EmailAddress = "user.testing@outlook.com";
-                    x.HashedPassword = "Gt9Yc4AiIvmsC1QQbe2RZsCIqvoYlst2xbz0Fs8aHnw=";
-                    x.RefreshToken = "jkWV:\\z;i82O)1=jD#v2etCZ{bH/sc6ku\"/p3VViTE8!mufZBhA-iXiFPwcrU]Qsf{Ldj4D{jWud**cQg7\"=-OB-";
-                    x.RefreshTokenExpiresAtUtc = DateTime.UtcNow.AddDays(7);
-                })
-                .Build();
             context.Users.Add(fakeUser);
-            context.UserCredentials.Add(fakeUserCredential);
             await context.SaveChangesAsync();
 
             //Act
-            var result = await logoutUserRepository.CheckIfUserCredentialExistsAsync(fakeUser.Id);
+            var result = await updatePrivacySettingRepository.CheckIfUserExists(fakeUser.Id);
 
             //Assert
             Assert.True(result);
         }
 
         [Fact]
-        public async Task InvalidCheckIfUserCredentialExists()
+        public async Task InvalidCheckIfUserExists()
+        {
+            //Arrange
+            var fakeUser = Builder<Models.User>.CreateNew().Build();
+
+            //Act
+            var result = await updatePrivacySettingRepository.CheckIfUserExists(fakeUser.Id);
+
+            //Assert
+            Assert.False(result);
+        }
+
+        [Fact]
+        public async Task ValidGetUserIdByEmail()
+        {
+            //Arrange
+            var fakeUser = Builder<Models.User>.CreateNew().Build();
+            var fakeUserCredential = Builder<Models.UserCredential>.CreateNew()
+                .Do(x =>
+                {
+                    x.UserId = fakeUser.Id;
+                    x.EmailAddress = "user.testing@outlook.com";
+                    x.HashedPassword = "Gt9Yc4AiIvmsC1QQbe2RZsCIqvoYlst2xbz0Fs8aHnw=";
+                    x.RefreshToken = "jkWV:\\z;i82O)1=jD#v2etCZ{bH/sc6ku\"/p3VViTE8!mufZBhA-iXiFPwcrU]Qsf{Ldj4D{jWud**cQg7\"=-OB-";
+                    x.RefreshTokenExpiresAtUtc = DateTime.UtcNow.AddDays(7);
+                })
+                .Build();
+            context.Users.Add(fakeUser);
+            context.UserCredentials.Add(fakeUserCredential);
+            await context.SaveChangesAsync();
+
+            //Act
+            var result = await updatePrivacySettingRepository.GetUserIdByEmailAsync(fakeUserCredential.EmailAddress);
+
+            //Assert
+            Assert.NotNull(result);
+            Assert.Equal(fakeUser.Id, result);
+        }
+
+        [Fact]
+        public async Task InvalidGetUserIdByEmail()
         {
             //Arrange
             var fakeUser = Builder<Models.User>.CreateNew().Build();
@@ -101,10 +139,10 @@ namespace Planorama.User.Infrastructure.UnitTests.Repository.Authentication
                 .Build();
 
             //Act
-            var result = await logoutUserRepository.CheckIfUserCredentialExistsAsync(fakeUser.Id);
+            var result = await updatePrivacySettingRepository.GetUserIdByEmailAsync(fakeUserCredential.EmailAddress);
 
             //Assert
-            Assert.False(result);
+            Assert.Null(result);
         }
     }
 }
