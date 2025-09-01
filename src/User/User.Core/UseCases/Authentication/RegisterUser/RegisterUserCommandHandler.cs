@@ -26,10 +26,6 @@ namespace Planorama.User.Core.UseCases.Authentication.RegisterUser
             if (isDuplicate)
             {
                 errors.Add("emailAddress", ["User with the same email address already exist."]);
-            }
-
-            if (errors.Any())
-            {
                 throw new ValidationException(errors);
             }
 

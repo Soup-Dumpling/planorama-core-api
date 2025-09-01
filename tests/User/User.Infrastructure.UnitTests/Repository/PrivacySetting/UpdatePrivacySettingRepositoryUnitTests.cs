@@ -33,7 +33,7 @@ namespace Planorama.User.Infrastructure.UnitTests.Repository.PrivacySetting
                     x.UserId = fakeUser.Id;
                     x.EmailAddress = "user.testing@outlook.com";
                     x.HashedPassword = "Gt9Yc4AiIvmsC1QQbe2RZsCIqvoYlst2xbz0Fs8aHnw=";
-                    x.RefreshToken = "jkWV:\\z;i82O)1=jD#v2etCZ{bH/sc6ku\"/p3VViTE8!mufZBhA-iXiFPwcrU]Qsf{Ldj4D{jWud**cQg7\"=-OB-";
+                    x.RefreshToken = "nvBhkx2Pfm633TYf56by974P0al2JLhjZ1ch324auT6Jn9dIAerWQNJCthZ05KguFymxZ0QBfeeaMP3IlYt1HQ==";
                     x.RefreshTokenExpiresAtUtc = DateTime.UtcNow.AddDays(7);
                 })
                 .Build();
@@ -106,7 +106,7 @@ namespace Planorama.User.Infrastructure.UnitTests.Repository.PrivacySetting
                     x.UserId = fakeUser.Id;
                     x.EmailAddress = "user.testing@outlook.com";
                     x.HashedPassword = "Gt9Yc4AiIvmsC1QQbe2RZsCIqvoYlst2xbz0Fs8aHnw=";
-                    x.RefreshToken = "jkWV:\\z;i82O)1=jD#v2etCZ{bH/sc6ku\"/p3VViTE8!mufZBhA-iXiFPwcrU]Qsf{Ldj4D{jWud**cQg7\"=-OB-";
+                    x.RefreshToken = "nvBhkx2Pfm633TYf56by974P0al2JLhjZ1ch324auT6Jn9dIAerWQNJCthZ05KguFymxZ0QBfeeaMP3IlYt1HQ==";
                     x.RefreshTokenExpiresAtUtc = DateTime.UtcNow.AddDays(7);
                 })
                 .Build();
@@ -133,7 +133,7 @@ namespace Planorama.User.Infrastructure.UnitTests.Repository.PrivacySetting
                     x.UserId = fakeUser.Id;
                     x.EmailAddress = "user.testing@outlook.com";
                     x.HashedPassword = "Gt9Yc4AiIvmsC1QQbe2RZsCIqvoYlst2xbz0Fs8aHnw=";
-                    x.RefreshToken = "jkWV:\\z;i82O)1=jD#v2etCZ{bH/sc6ku\"/p3VViTE8!mufZBhA-iXiFPwcrU]Qsf{Ldj4D{jWud**cQg7\"=-OB-";
+                    x.RefreshToken = "nvBhkx2Pfm633TYf56by974P0al2JLhjZ1ch324auT6Jn9dIAerWQNJCthZ05KguFymxZ0QBfeeaMP3IlYt1HQ==";
                     x.RefreshTokenExpiresAtUtc = DateTime.UtcNow.AddDays(7);
                 })
                 .Build();

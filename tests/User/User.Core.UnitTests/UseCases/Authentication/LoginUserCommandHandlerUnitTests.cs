@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using NSubstitute;
+﻿using NSubstitute;
 using Planorama.User.Core.Exceptions;
 using Planorama.User.Core.Models;
 using Planorama.User.Core.Services;
@@ -7,7 +6,6 @@ using Planorama.User.Core.UseCases.Authentication.LoginUser;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
@@ -22,7 +20,7 @@ namespace Planorama.User.Core.UnitTests.UseCases.Authentication
 
         public LoginUserCommandHandlerUnitTests()
         {
-            this.loginUserCommandHandler = new LoginUserCommandHandler(jwtServiceMock, loginUserRepositoryMock);
+            loginUserCommandHandler = new LoginUserCommandHandler(jwtServiceMock, loginUserRepositoryMock);
         }
 
         [Fact]
@@ -30,7 +28,7 @@ namespace Planorama.User.Core.UnitTests.UseCases.Authentication
         {
             //Arrange
             var command = new LoginUserCommand("user.testing@outlook.com", "Password1!");
-            var userLoggedInEvent = new UserLoggedInEvent(Guid.NewGuid(), "jkWV:\\z;i82O)1=jD#v2etCZ{bH/sc6ku\"/p3VViTE8!mufZBhA-iXiFPwcrU]Qsf{Ldj4D{jWud**cQg7\"=-OB-", DateTime.UtcNow.AddDays(7));
+            var userLoggedInEvent = new UserLoggedInEvent(Guid.NewGuid(), "nvBhkx2Pfm633TYf56by974P0al2JLhjZ1ch324auT6Jn9dIAerWQNJCthZ05KguFymxZ0QBfeeaMP3IlYt1HQ==", DateTime.UtcNow.AddDays(7));
             var userCredential = new UserCredential() { UserId = userLoggedInEvent.Id, EmailAddress = command.EmailAddress, HashedPassword = "AQAAAAIAAYagAAAAEON9dR34Gs2mNIsbIL5sClwRZN+NnZtuKc1wVHHipo5H9IgKj04vx22XV49i08wMwg==", RefreshToken = userLoggedInEvent.RefreshToken, RefreshTokenExpiresAtUtc = userLoggedInEvent.RefreshTokenExpiresAtUtc };
             loginUserRepositoryMock.FindUserCredentialByEmailAsync(Arg.Any<string>()).Returns(Task.FromResult(userCredential));
             loginUserRepositoryMock.GetUserFullNameByIdAsync(Arg.Any<Guid>()).Returns(Task.FromResult("firstName lastName"));
@@ -63,7 +61,7 @@ namespace Planorama.User.Core.UnitTests.UseCases.Authentication
         {
             //Arrange
             var command = new LoginUserCommand("user.testing@outlook.com", "Password1!");
-            loginUserRepositoryMock.FindUserCredentialByEmailAsync(Arg.Any<string>()).Returns(null as UserCredential);
+            loginUserRepositoryMock.FindUserCredentialByEmailAsync(Arg.Any<string>()).Returns(Task.FromResult(null as UserCredential));
 
             //Act and Assert
             await Assert.ThrowsAsync<LoginFailedException>(async () => await loginUserCommandHandler.Handle(command, CancellationToken.None));

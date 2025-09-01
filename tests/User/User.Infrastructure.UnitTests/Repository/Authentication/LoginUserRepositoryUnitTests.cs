@@ -35,7 +35,7 @@ namespace Planorama.User.Infrastructure.UnitTests.Repository.Authentication
                     x.HashedPassword = "Gt9Yc4AiIvmsC1QQbe2RZsCIqvoYlst2xbz0Fs8aHnw=";
                 })
                 .Build();
-            var fakeRefreshToken = "jkWV:\\z;i82O)1=jD#v2etCZ{bH/sc6ku\"/p3VViTE8!mufZBhA-iXiFPwcrU]Qsf{Ldj4D{jWud**cQg7\"=-OB-";
+            var fakeRefreshToken = "nvBhkx2Pfm633TYf56by974P0al2JLhjZ1ch324auT6Jn9dIAerWQNJCthZ05KguFymxZ0QBfeeaMP3IlYt1HQ==";
             var fakeRefreshTokenExpiresAtUtc = DateTime.UtcNow.AddDays(7);
             context.Users.Add(fakeUser);
             context.UserCredentials.Add(fakeUserCredential);

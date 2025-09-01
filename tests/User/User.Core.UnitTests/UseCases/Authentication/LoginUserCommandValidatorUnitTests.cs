@@ -1,6 +1,5 @@
 ﻿using FluentValidation.TestHelper;
 using Planorama.User.Core.UseCases.Authentication.LoginUser;
-using System;
 using System.Threading.Tasks;
 using Xunit;
 
