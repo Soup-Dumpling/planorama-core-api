@@ -41,7 +41,8 @@ namespace Planorama.User.Core.UnitTests.UseCases.Authentication
             jwtServiceMock.GenerateJwtToken(Arg.Any<UserCredential>(), Arg.Any<string>(), Arg.Any<IEnumerable<string>>()).Returns((jwtToken, DateTime.UtcNow.AddMinutes(60)));
             var refreshToken = "nvBhkx2Pfm633TYf56by974P0al2JLhjZ1ch324auT6Jn9dIAerWQNJCthZ05KguFymxZ0QBfeeaMP3IlYt1HQ==";
             jwtServiceMock.GenerateRefreshToken().Returns(refreshToken);
-            await refreshTokensRepositoryMock.UpdateRefreshTokenAsync(Arg.Any<Guid>(), Arg.Any<string>(), Arg.Any<DateTime>(), Arg.Any<string>());
+            var tokensUpdatedEvent = new TokensUpdatedEvent(userCredential.UserId, refreshToken, DateTime.UtcNow.AddDays(7));
+            refreshTokensRepositoryMock.UpdateRefreshTokenAsync(Arg.Any<Guid>(), Arg.Any<string>(), Arg.Any<DateTime>(), Arg.Any<string>()).Returns(tokensUpdatedEvent);
             jwtServiceMock.WriteAccessAndRefreshTokensAsHttpOnlyCookie(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
             jwtServiceMock.WriteAccessAndRefreshTokensAsHttpOnlyCookie(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
 
@@ -54,9 +55,9 @@ namespace Planorama.User.Core.UnitTests.UseCases.Authentication
             await refreshTokensRepositoryMock.Received().GetUserRolesByIdAsync(userCredential.UserId);
             jwtServiceMock.Received().GenerateJwtToken(userCredential, "firstName lastName", Arg.Is<IEnumerable<string>>(x => x.Count() == 1 && x.First() == Constants.Roles.UserRole));
             jwtServiceMock.Received().GenerateRefreshToken();
-            await refreshTokensRepositoryMock.Received().UpdateRefreshTokenAsync(userCredential.UserId, refreshToken, Arg.Is<DateTime>(x => x >= userCredential.RefreshTokenExpiresAtUtc), "user.testing@outlook.com");
+            await refreshTokensRepositoryMock.Received().UpdateRefreshTokenAsync(userCredential.UserId, refreshToken, Arg.Is<DateTime>(x => x <= DateTime.UtcNow.AddDays(7)), "user.testing@outlook.com");
             jwtServiceMock.Received().WriteAccessAndRefreshTokensAsHttpOnlyCookie("ACCESS_TOKEN", jwtToken, Arg.Is<DateTime>(x => x <= DateTime.UtcNow.AddMinutes(60)));
-            jwtServiceMock.Received().WriteAccessAndRefreshTokensAsHttpOnlyCookie("REFRESH_TOKEN", refreshToken, Arg.Is<DateTime>(x => x >= userCredential.RefreshTokenExpiresAtUtc));
+            jwtServiceMock.Received().WriteAccessAndRefreshTokensAsHttpOnlyCookie("REFRESH_TOKEN", refreshToken, Arg.Is<DateTime>(x => x <= DateTime.UtcNow.AddDays(7)));
         }
 
         [Fact]

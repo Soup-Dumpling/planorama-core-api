@@ -1,4 +1,5 @@
 ﻿using NSubstitute;
+using NSubstitute.ReturnsExtensions;
 using Planorama.User.Core.Context;
 using Planorama.User.Core.Exceptions;
 using Planorama.User.Core.UseCases.PrivacySetting.GetPrivacySetting;
@@ -39,6 +40,34 @@ namespace Planorama.User.Core.UnitTests.UseCases.PrivacySetting
             Assert.IsType<GetPrivacySettingViewModel>(result);
             await getPrivacySettingRepositoryMock.Received().GetUserIdByEmailAsync("user.testing@outlook.com");
             await getPrivacySettingRepositoryMock.Received().GetUserPrivacySettingByIdAsync(userId);
+        }
+
+        [Fact]
+        public async Task UserNotLoggedIn()
+        {
+            //Arrange
+            var query = new GetPrivacySettingQuery();
+            userContextMock.IsLoggedIn().Returns(false);
+
+            //Act and Assert
+            await Assert.ThrowsAsync<AuthorizationException>(async () => await getPrivacySettingQueryHandler.Handle(query, CancellationToken.None));
+            await getPrivacySettingRepositoryMock.DidNotReceive().GetUserIdByEmailAsync(Arg.Any<string>());
+            await getPrivacySettingRepositoryMock.DidNotReceive().GetUserPrivacySettingByIdAsync(Arg.Any<Guid>());
+        }
+
+        [Fact]
+        public async Task UserNotFound()
+        {
+            //Arrange
+            var query = new GetPrivacySettingQuery();
+            userContextMock.IsLoggedIn().Returns(true);
+            userContextMock.UserName.Returns("user.testing@outlook.com");
+            getPrivacySettingRepositoryMock.GetUserIdByEmailAsync(Arg.Any<string>()).ReturnsNull();
+
+            //Act and Assert
+            await Assert.ThrowsAsync<NotFoundException>(async () => await getPrivacySettingQueryHandler.Handle(query, CancellationToken.None));
+            await getPrivacySettingRepositoryMock.Received().GetUserIdByEmailAsync("user.testing@outlook.com");
+            await getPrivacySettingRepositoryMock.DidNotReceive().GetUserPrivacySettingByIdAsync(Arg.Any<Guid>());
         }
     }
 }

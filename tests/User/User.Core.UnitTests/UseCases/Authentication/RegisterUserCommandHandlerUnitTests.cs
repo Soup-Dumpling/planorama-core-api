@@ -1,9 +1,7 @@
 ﻿using NSubstitute;
 using Planorama.User.Core.Constants;
-using Planorama.User.Core.Context;
 using Planorama.User.Core.Exceptions;
 using Planorama.User.Core.Models;
-using Planorama.User.Core.Services;
 using Planorama.User.Core.UseCases.Authentication.RegisterUser;
 using System;
 using System.Collections.Generic;
