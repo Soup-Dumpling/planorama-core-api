@@ -37,6 +37,11 @@ namespace Planorama.User.API.IntegrationTests.Controllers
                     x.Password = "Password1!";
                 }).Build();
 
+            host.WithEmptyDatabase(async context =>
+            {
+                await context.SaveChangesAsync();
+            });
+
             //Act
             var response = await host.Scenario(_ =>
             {
