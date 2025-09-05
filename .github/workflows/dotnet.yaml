@@ -2,9 +2,9 @@ name: .NET Workflow
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "develop"]
   pull_request:
-    branches: ["main"]
+    branches: ["main", "develop"]
     paths:
       - "src/**"
       - "Planorama.sln"
