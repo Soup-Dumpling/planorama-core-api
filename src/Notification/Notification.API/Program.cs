@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace Planorama.User.API
+namespace Planorama.Notification.API
 {
     public class Program
     {
@@ -12,7 +12,7 @@ namespace Planorama.User.API
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-            .ConfigureWebHostDefaults(webBuilder => 
+            .ConfigureWebHostDefaults(webBuilder =>
             {
                 webBuilder.UseKestrel(options =>
                 {

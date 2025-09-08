@@ -7,7 +7,6 @@ using Planorama.User.Core.UseCases.Authentication.RegisterUser;
 using Planorama.User.Core.UseCases.Authentication.LoginUser;
 using Planorama.User.Core.UseCases.Authentication.RefreshTokens;
 using Planorama.User.Core.UseCases.Authentication.LogoutUser;
-using System;
 using System.Threading.Tasks;
 
 namespace Planorama.User.API.Controllers

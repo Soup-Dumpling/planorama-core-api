@@ -2,19 +2,15 @@
 using System.Linq;
 using System.Security.Claims;
 
-namespace Planorama.User.Core.Context
+namespace Planorama.Notification.Core.Context
 {
     public class UserContext : IUserContext
     {
         private readonly ClaimsPrincipal claimsPrincipal;
-        public string AccessToken { get; private set; }
-        public string RefreshToken { get; private set; }
 
         public UserContext(IHttpContextAccessor httpContextAccessor)
         {
             this.claimsPrincipal = httpContextAccessor.HttpContext.User;
-            AccessToken = httpContextAccessor.HttpContext.Request.Cookies["ACCESS_TOKEN"];
-            RefreshToken = httpContextAccessor.HttpContext.Request.Cookies["REFRESH_TOKEN"];
         }
 
         public string UserName

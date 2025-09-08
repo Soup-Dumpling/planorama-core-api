@@ -1,13 +1,13 @@
 ﻿using FizzWare.NBuilder;
+using Microsoft.EntityFrameworkCore;
 using Models = Planorama.User.Core.Models;
+using Planorama.User.Core.UseCases.Authentication.LoginUser;
 using Planorama.User.Infrastructure.Repository.Authentication;
 using System;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
-using Planorama.User.Core.UseCases.Authentication.LoginUser;
-using Microsoft.EntityFrameworkCore;
-using System.Text.Json;
 
 namespace Planorama.User.Infrastructure.UnitTests.Repository.Authentication
 {

@@ -34,7 +34,7 @@ namespace Planorama.User.Core.UseCases.Authentication.RefreshTokens
             var userCredential = await refreshTokensRepository.FindUserCredentialByRefreshTokenAsync(command.RefreshToken);
             if (userCredential == null)
             {
-                errors.Add("refreshToken", new string[] { "Unable to retrieve user for refresh token." });
+                errors.Add("refreshToken", new string[] { "Refresh token is invalid." });
                 throw new RefreshTokenException(errors);
             }
 

@@ -2,7 +2,7 @@
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Collections.Generic;
 
-namespace Planorama.User.API.Filters
+namespace Planorama.Notification.API.Filters
 {
     public class AuthorizeCheckOperationFilter : IOperationFilter
     {

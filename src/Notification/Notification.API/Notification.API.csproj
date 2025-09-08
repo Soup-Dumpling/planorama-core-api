@@ -1,16 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
-	<PropertyGroup>
+    <PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
 		<RootNamespace>Planorama.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
-		<UserSecretsId>743c313e-11e0-486a-b5e3-369af102a10d</UserSecretsId>
+		<UserSecretsId>30f40485-1979-40fd-bac7-152bb1f79f39</UserSecretsId>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 		<DockerfileContext>..\..\..</DockerfileContext>
-		<DockerComposeProjectPath>..\..\..\docker-compose.dcproj</DockerComposeProjectPath>
-		<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
 	</PropertyGroup>
-	<ItemGroup>
-		<PackageReference Include="FluentValidation" Version="12.0.0" />
-		<PackageReference Include="MediatR" Version="12.5.0" />
+    <ItemGroup>
+        <PackageReference Include="FluentValidation" Version="12.0.0" />
+        <PackageReference Include="MediatR" Version="12.5.0" />
 		<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.17" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.6">
@@ -19,12 +17,13 @@
 		</PackageReference>
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.2" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-		<PackageReference Include="NSubstitute" Version="5.3.0" />
+        <PackageReference Include="NSubstitute" Version="5.3.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.1" />
 	</ItemGroup>
-	<ItemGroup>
+    <ItemGroup>
+		<ProjectReference Include="..\..\Integration\Planorama.Integration.MessageBroker.Core\Planorama.Integration.MessageBroker.Core.csproj" />
 		<ProjectReference Include="..\..\Integration\Planorama.Integration.MessageBroker.RabbitMq\Planorama.Integration.MessageBroker.RabbitMq.csproj" />
-		<ProjectReference Include="..\User.Core\User.Core.csproj" />
-        <ProjectReference Include="..\User.Infrastructure\User.Infrastructure.csproj" />
+		<ProjectReference Include="..\Notification.Core\Notification.Core.csproj" />
+		<ProjectReference Include="..\Notification.Infrastructure\Notification.Infrastructure.csproj" />
 	</ItemGroup>
 </Project>

@@ -10,19 +10,18 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Planorama.Integration.MessageBroker.RabbitMq;
-using Planorama.User.API.Filters;
-using Planorama.User.API.Middleware;
-using Planorama.User.Core.Constants;
-using Planorama.User.Core.Context;
-using Planorama.User.Core.Services;
-using Planorama.User.Core.UseCases.Authentication.RegisterUser;
-using Planorama.User.Infrastructure;
+using Planorama.Notification.API.BackgroundService;
+using Planorama.Notification.API.Filters;
+using Planorama.Notification.API.Middleware;
+using Planorama.Notification.Core.Constants;
+using Planorama.Notification.Core.Context;
+using Planorama.Notification.Infrastructure;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace Planorama.User.API
+namespace Planorama.Notification.API
 {
     public class Startup
     {
@@ -49,7 +48,7 @@ namespace Planorama.User.API
 
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidatorPipelineBehavior<,>));
 
-            AssemblyScanner.FindValidatorsInAssembly(typeof(RegisterUserCommandValidator).Assembly)
+            AssemblyScanner.FindValidatorsInAssembly(typeof(Startup).Assembly)
                 .ForEach(item => services.AddScoped(item.InterfaceType, item.ValidatorType));
 
             services.AddControllers()
@@ -61,13 +60,12 @@ namespace Planorama.User.API
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "User API", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Notification API", Version = "v1" });
                 c.OperationFilter<AuthorizeCheckOperationFilter>();
             });
 
             services.AddMediatR(cfg => {
                 cfg.RegisterServicesFromAssembly(typeof(Startup).Assembly);
-                cfg.RegisterServicesFromAssembly(typeof(RegisterUserCommand).Assembly);
             });
 
             services.AddRouting(options =>
@@ -135,11 +133,12 @@ namespace Planorama.User.API
 
             services.AddHealthChecks();
             services.AddHttpContextAccessor();
-            services.AddScoped<IUserContext, UserContext>();
-            services.AddScoped<IJwtService, JwtService>();
+            services.AddTransient<IUserContext, UserContext>();
             services.AddInfrastructureBindings(Configuration);
+            // Service Bus
             services.AddRabbitMq(Configuration);
-            services.AddHttpClient<IHttpService, HttpService>();
+            RegisterEventBusEvents(services);
+            services.AddHostedService<ServiceBusBackgroundService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -157,7 +156,7 @@ namespace Planorama.User.API
                 app.UseSwagger();
                 app.UseSwaggerUI(c =>
                 {
-                    c.SwaggerEndpoint("v1/swagger.json", "User API V1");
+                    c.SwaggerEndpoint("v1/swagger.json", "Notification API V1");
                 });
             }
 
@@ -179,8 +178,13 @@ namespace Planorama.User.API
         private void MigrateDatabase(IApplicationBuilder app)
         {
             using var scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope();
-            var context = scope.ServiceProvider.GetRequiredService<UserDBContext>();
+            var context = scope.ServiceProvider.GetRequiredService<NotificationContext>();
             context.Database.Migrate();
+        }
+
+        private void RegisterEventBusEvents(IServiceCollection services)
+        {
+
         }
     }
 }
