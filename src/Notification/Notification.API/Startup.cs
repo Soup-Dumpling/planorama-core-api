@@ -15,6 +15,7 @@ using Planorama.Notification.API.Filters;
 using Planorama.Notification.API.Middleware;
 using Planorama.Notification.Core.Constants;
 using Planorama.Notification.Core.Context;
+using Planorama.Notification.Core.UseCases.Notification.GetNotifications;
 using Planorama.Notification.Infrastructure;
 using System.Linq;
 using System.Text;
@@ -66,6 +67,7 @@ namespace Planorama.Notification.API
 
             services.AddMediatR(cfg => {
                 cfg.RegisterServicesFromAssembly(typeof(Startup).Assembly);
+                cfg.RegisterServicesFromAssembly(typeof(GetNotificationsQuery).Assembly);
             });
 
             services.AddRouting(options =>

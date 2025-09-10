@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Planorama.User.API.Models.PrivacySetting;
 using Planorama.User.Core.UseCases.PrivacySetting.GetPrivacySetting;
 using Planorama.User.Core.UseCases.PrivacySetting.UpdatePrivacySetting;
+using System;
 using System.Threading.Tasks;
 
 namespace Planorama.User.API.Controllers
@@ -18,7 +19,7 @@ namespace Planorama.User.API.Controllers
         public PrivacySettingController(ILogger<PrivacySettingController> logger, IMediator mediator)
         {
             this.logger = logger;
-            this.mediator = mediator;
+            this.mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
         [HttpGet]

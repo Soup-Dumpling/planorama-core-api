@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Planorama.User.Core.UseCases.User.GetLoggedInUser;
+using System;
 using System.Threading.Tasks;
 
 namespace Planorama.User.API.Controllers
@@ -16,7 +17,7 @@ namespace Planorama.User.API.Controllers
         public UserController(ILogger<UserController> logger, IMediator mediator)
         {
             this.logger = logger;
-            this.mediator = mediator;
+            this.mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
         [HttpGet("logged-in")]
