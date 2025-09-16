@@ -6,15 +6,14 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Planorama.Integration.MessageBroker.Core.Abstraction;
-using Planorama.User.API.IntegrationTests.Fakes;
-using Planorama.User.Core.Services;
-using Planorama.User.Infrastructure;
+using Planorama.Notification.API.IntegrationTests.Fakes;
+using Planorama.Notification.Infrastructure;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Planorama.User.API.IntegrationTests
+namespace Planorama.Notification.API.IntegrationTests
 {
     public class AppFixture : IDisposable, IAsyncLifetime
     {
@@ -38,17 +37,15 @@ namespace Planorama.User.API.IntegrationTests
                 .CreateHostBuilder(Array.Empty<string>())
                 .ConfigureServices((config, services) =>
                 {
-                    var descriptors = services.Where(d => d.ServiceType == typeof(IDbContextOptionsConfiguration<UserDBContext>)
-                    || d.ServiceType == typeof(IHttpService)
+                    var descriptors = services.Where(d => d.ServiceType == typeof(IDbContextOptionsConfiguration<NotificationContext>)
                     || d.ServiceType == typeof(IEventBus)).ToList();
 
                     foreach (var descriptor in descriptors)
                     {
                         services.Remove(descriptor);
                     }
-                    services.AddScoped<IHttpService, FakeHttpService>();
                     services.AddSingleton<IEventBus, FakeEventBus>();
-                    services.AddDbContext<UserDBContext>(options =>
+                    services.AddDbContext<NotificationContext>(options =>
                     {
                         options.UseInMemoryDatabase("InMemoryDbForTesting", _dbRoot);
                     });

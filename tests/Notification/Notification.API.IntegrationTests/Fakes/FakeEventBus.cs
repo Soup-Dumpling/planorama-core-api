@@ -2,7 +2,7 @@
 using Planorama.Integration.MessageBroker.Core.Events;
 using System.Threading.Tasks;
 
-namespace Planorama.User.API.IntegrationTests.Fakes
+namespace Planorama.Notification.API.IntegrationTests.Fakes
 {
     public class FakeEventBus : IEventBus
     {
