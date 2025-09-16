@@ -17,8 +17,6 @@ using Planorama.User.Core.Context;
 using Planorama.User.Core.Services;
 using Planorama.User.Core.UseCases.Authentication.RegisterUser;
 using Planorama.User.Infrastructure;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -63,7 +61,7 @@ namespace Planorama.User.API
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Planorama Api", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "User API", Version = "v1" });
                 c.OperationFilter<AuthorizeCheckOperationFilter>();
             });
 
@@ -159,7 +157,7 @@ namespace Planorama.User.API
                 app.UseSwagger();
                 app.UseSwaggerUI(c =>
                 {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Api v1");
+                    c.SwaggerEndpoint("v1/swagger.json", "User API V1");
                 });
             }
 

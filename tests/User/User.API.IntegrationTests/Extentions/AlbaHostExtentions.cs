@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Planorama.User.API.IntegrationTests.Extentions
 {
-    public static class AlbaHostExtention
+    public static class AlbaHostExtentions
     {
         public static void WithEmptyDatabase(this IAlbaHost host, Action<UserDBContext> action)
         {

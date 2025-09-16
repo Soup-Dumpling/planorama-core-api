@@ -14,7 +14,7 @@ namespace Planorama.User.API
             Host.CreateDefaultBuilder(args)
             .ConfigureWebHostDefaults(webBuilder => 
             {
-                webBuilder.UseKestrel((options) =>
+                webBuilder.UseKestrel(options =>
                 {
                     options.AddServerHeader = false;
                 });

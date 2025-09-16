@@ -6,16 +6,11 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Planorama.Integration.MessageBroker.Core.Abstraction;
-using Planorama.User.API.Constants;
 using Planorama.User.API.IntegrationTests.Fakes;
-using Planorama.User.Core.Constants;
 using Planorama.User.Core.Services;
 using Planorama.User.Infrastructure;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
