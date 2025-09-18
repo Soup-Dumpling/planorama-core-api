@@ -1,10 +1,7 @@
 ﻿using MediatR;
 using Planorama.User.Core.Context;
 using Planorama.User.Core.Exceptions;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -21,10 +18,10 @@ namespace Planorama.User.Core.UseCases.PrivacySetting.UpdatePrivacySetting
             this.userContext = userContext;
         }
 
-        public async Task Handle(UpdatePrivacySettingCommand command, CancellationToken cancellationToken)
+        public async Task Handle(UpdatePrivacySettingCommand request, CancellationToken cancellationToken)
         {
             var errors = new Dictionary<string, string[]>();
-            var userExists = await updatePrivacySettingRepository.CheckIfUserExists(command.UserId);
+            var userExists = await updatePrivacySettingRepository.CheckIfUserExists(request.UserId);
             if (!userExists)
             {
                 errors.Add("userId", new string[] { "User not found." });
@@ -32,12 +29,12 @@ namespace Planorama.User.Core.UseCases.PrivacySetting.UpdatePrivacySetting
             }
 
             var userId = await updatePrivacySettingRepository.GetUserIdByEmailAsync(userContext.UserName);
-            if (userId != command.UserId)
+            if (userId != request.UserId)
             {
                 throw new AuthorizationException();
             }
 
-            await updatePrivacySettingRepository.UpdatePrivacySettingAsync(command.UserId, command.IsPrivate, userContext.UserName);
+            await updatePrivacySettingRepository.UpdatePrivacySettingAsync(request.UserId, request.IsPrivate, userContext.UserName);
             return;
         }
     }
