@@ -37,7 +37,7 @@ namespace Planorama.User.Core.UnitTests.UseCases.Authentication
             var jwtToken = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJwbGFub3JhbWEtYXBpIiwiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NTAwMSIsImV4cCI6MTc1NDExMzQwMywianRpIjoiMGZkYWJjNjEtMjBhYi00OGEyLTgyOTQtYzlkMGVhMzIwNmQzIiwic3ViIjoiZmY0Zjk2NzUtNTIwZi00MDgwLTlkYTMtOGMyMzU0Nzg5N2QwIiwibmFtZSI6IkJyaWFuIEdyaWZmaW4iLCJlbWFpbCI6ImJlMTgyYjA4YzNmNDRlMDQ5ZjI2YTg1OEBnbWFpbC5jb20iLCJzY29wZSI6InBsYW5vcmFtYS1hcGkiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJwbGFub3JhbWEudXNlciIsImlhdCI6MTc1NDEwOTgwMywibmJmIjoxNzU0MTA5ODAzfQ.iytSGvyslmq8r4qTEa6ZtxEoTJ0qy5p0rWCfSLV_NJuJ_0-sjlCfAT_XedzSP8rVZndBX9iAbtzt-o28sYOlgw";
             jwtServiceMock.GenerateJwtToken(Arg.Any<UserCredential>(), Arg.Any<string>(), Arg.Any<IEnumerable<string>>()).Returns((jwtToken, DateTime.UtcNow.AddMinutes(60)));
             jwtServiceMock.GenerateRefreshToken().Returns(userLoggedInEvent.RefreshToken);
-            loginUserRepositoryMock.AddRefreshTokenAsync(Arg.Any<Guid>(), Arg.Any<string>(), Arg.Any<DateTime>(), Arg.Any<string>()).Returns(userLoggedInEvent);
+            loginUserRepositoryMock.AddRefreshTokenAsync(Arg.Any<Guid>(), Arg.Any<string>(), Arg.Any<DateTime>(), Arg.Any<string>()).Returns(Task.FromResult(userLoggedInEvent));
             jwtServiceMock.WriteAccessAndRefreshTokensAsHttpOnlyCookie(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
             jwtServiceMock.WriteAccessAndRefreshTokensAsHttpOnlyCookie(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
 

@@ -29,7 +29,7 @@ namespace Planorama.User.Core.UnitTests.UseCases.PrivacySetting
             userContextMock.UserName.Returns("user.testing@outlook.com");
             updatePrivacySettingRepositoryMock.CheckIfUserExists(Arg.Any<Guid>()).Returns(Task.FromResult(true));
             updatePrivacySettingRepositoryMock.GetUserIdByEmailAsync(Arg.Any<string>()).Returns(command.UserId);
-            updatePrivacySettingRepositoryMock.UpdatePrivacySettingAsync(Arg.Any<Guid>(), Arg.Any<bool>(), Arg.Any<string>()).Returns(privacySettingUpdatedEvent);
+            updatePrivacySettingRepositoryMock.UpdatePrivacySettingAsync(Arg.Any<Guid>(), Arg.Any<bool>(), Arg.Any<string>()).Returns(Task.FromResult(privacySettingUpdatedEvent));
 
             //Act
             await updatePrivacySettingCommandHandler.Handle(command, CancellationToken.None);
