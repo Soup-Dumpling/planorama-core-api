@@ -5,14 +5,9 @@ using Xunit;
 namespace Planorama.Notification.API.IntegrationTests
 {
     [Collection("Integration")]
-    public class AuthorizationTests
+    public class AuthorizationTests(AppFixture fixture)
     {
-        private readonly IAlbaHost host;
-
-        public AuthorizationTests(AppFixture fixture)
-        {
-            host = fixture.Host;
-        }
+        private readonly IAlbaHost host = fixture.Host;
 
         [Theory]
         [InlineData("/api/notification")]

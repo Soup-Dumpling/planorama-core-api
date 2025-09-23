@@ -10,7 +10,7 @@ namespace Planorama.User.Infrastructure.UnitTests.Repository.PrivacySetting
     public class GetPrivacySettingRepositoryUnitTests
     {
         private readonly UserDBContext context;
-        private GetPrivacySettingRepository getPrivacySettingRepository;
+        private readonly GetPrivacySettingRepository getPrivacySettingRepository;
 
         public GetPrivacySettingRepositoryUnitTests() 
         {

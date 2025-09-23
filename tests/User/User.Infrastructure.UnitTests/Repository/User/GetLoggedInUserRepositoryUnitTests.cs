@@ -11,7 +11,7 @@ namespace Planorama.User.Infrastructure.UnitTests.Repository.User
     public class GetLoggedInUserRepositoryUnitTests
     {
         private readonly UserDBContext context;
-        private GetLoggedInUserRepository getLoggedInUserRepository;
+        private readonly GetLoggedInUserRepository getLoggedInUserRepository;
 
         public GetLoggedInUserRepositoryUnitTests() 
         {

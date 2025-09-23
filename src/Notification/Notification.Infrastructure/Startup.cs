@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Planorama.Notification.Core.UseCases.Notification.AddNotification;
+using Planorama.Notification.Core.UseCases.Notification.DeleteNotifications;
 using Planorama.Notification.Core.UseCases.Notification.GetNotifications;
 using Planorama.Notification.Infrastructure.Repository.Notification;
 using System.Reflection;
@@ -21,6 +22,7 @@ namespace Planorama.Notification.Infrastructure
                 });
             });
             services.AddScoped<IAddNotificationRepository, AddNotificationRepository>();
+            services.AddScoped<IDeleteNotificationsRepository, DeleteNotificationsRepository>();
             services.AddScoped<IGetNotificationsRepository, GetNotificationsRepository>();
         }
     }

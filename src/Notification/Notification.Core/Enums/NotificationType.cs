@@ -3,6 +3,7 @@
     public enum NotificationType
     {
         SquadInvitation = 1,
-        EventInvitation = 2
+        SquadRequestApproval = 2,
+        EventInvitation = 3
     }
 }

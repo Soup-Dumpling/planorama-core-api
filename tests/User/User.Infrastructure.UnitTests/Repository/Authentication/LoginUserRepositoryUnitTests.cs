@@ -14,7 +14,7 @@ namespace Planorama.User.Infrastructure.UnitTests.Repository.Authentication
     public class LoginUserRepositoryUnitTests
     {
         private readonly UserDBContext context;
-        private LoginUserRepository loginUserRepository;
+        private readonly LoginUserRepository loginUserRepository;
 
         public LoginUserRepositoryUnitTests()
         {

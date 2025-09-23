@@ -13,9 +13,9 @@ namespace Planorama.User.Core.UnitTests.UseCases.Authentication
     public class LogoutUserCommandHandlerUnitTests
     {
         private readonly LogoutUserCommandHandler logoutUserCommandHandler;
-        private IJwtService jwtServiceMock = Substitute.For<IJwtService>();
-        private ILogoutUserRepository logoutUserRepositoryMock = Substitute.For<ILogoutUserRepository>();
-        private IUserContext userContextMock = Substitute.For<IUserContext>();
+        private readonly IJwtService jwtServiceMock = Substitute.For<IJwtService>();
+        private readonly ILogoutUserRepository logoutUserRepositoryMock = Substitute.For<ILogoutUserRepository>();
+        private readonly IUserContext userContextMock = Substitute.For<IUserContext>();
 
         public LogoutUserCommandHandlerUnitTests() 
         {

@@ -14,7 +14,7 @@ namespace Planorama.User.Infrastructure.UnitTests.Repository.PrivacySetting
     public class UpdatePrivacySettingRepositoryUnitTests
     {
         private readonly UserDBContext context;
-        private UpdatePrivacySettingRepository updatePrivacySettingRepository;
+        private readonly UpdatePrivacySettingRepository updatePrivacySettingRepository;
 
         public UpdatePrivacySettingRepositoryUnitTests()
         {

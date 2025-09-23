@@ -12,8 +12,8 @@ namespace Planorama.User.Core.UnitTests.UseCases.PrivacySetting
     public class UpdatePrivacySettingCommandHandlerUnitTests
     {
         private readonly UpdatePrivacySettingCommandHandler updatePrivacySettingCommandHandler;
-        private IUpdatePrivacySettingRepository updatePrivacySettingRepositoryMock = Substitute.For<IUpdatePrivacySettingRepository>();
-        private IUserContext userContextMock = Substitute.For<IUserContext>();
+        private readonly IUpdatePrivacySettingRepository updatePrivacySettingRepositoryMock = Substitute.For<IUpdatePrivacySettingRepository>();
+        private readonly IUserContext userContextMock = Substitute.For<IUserContext>();
 
         public UpdatePrivacySettingCommandHandlerUnitTests()
         {

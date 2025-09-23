@@ -14,14 +14,9 @@ using Xunit;
 namespace Planorama.Notification.API.IntegrationTests.Controllers
 {
     [Collection("Integration")]
-    public class NotificationControllerTests
+    public class NotificationControllerTests(AppFixture fixture)
     {
-        private readonly IAlbaHost host;
-
-        public NotificationControllerTests(AppFixture fixture) 
-        {
-            host = fixture.Host;
-        }
+        private readonly IAlbaHost host = fixture.Host;
 
         [Fact]
         public async Task GetNotifications()
