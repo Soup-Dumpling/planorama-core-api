@@ -13,7 +13,7 @@ namespace Planorama.Notification.Infrastructure.UnitTests.Repository.Notificatio
     public class AddNotificationRepositoryUnitTests
     {
         private readonly NotificationContext context;
-        private AddNotificationRepository addNotificationRepository;
+        private readonly AddNotificationRepository addNotificationRepository;
 
         public AddNotificationRepositoryUnitTests() 
         {
@@ -40,6 +40,7 @@ namespace Planorama.Notification.Infrastructure.UnitTests.Repository.Notificatio
                 })
                 .Build();
             var expectedEvent = new NotificationAddedEvent(fakeNotification.Id, fakeNotification.DateCreatedUtc, fakeNotification.UserId, fakeNotification.UserEmail, fakeNotification.Title, fakeNotification.Type, fakeNotification.Content, fakeNotification.ReferenceId, fakeNotification.DeleteId);
+            
             //Act
             var result = await addNotificationRepository.AddNotificationAsync(fakeNotification);
 

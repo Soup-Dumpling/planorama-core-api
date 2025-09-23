@@ -5,14 +5,9 @@ using Xunit;
 namespace Planorama.User.API.IntegrationTests
 {
     [Collection("Integration")]
-    public class HealthCheckTests
+    public class HealthCheckTests(AppFixture fixture)
     {
-        private readonly IAlbaHost host;
-
-        public HealthCheckTests(AppFixture fixture)
-        {
-            host = fixture.Host;
-        }
+        private readonly IAlbaHost host = fixture.Host;
 
         [Fact]
         public async Task Healthy()

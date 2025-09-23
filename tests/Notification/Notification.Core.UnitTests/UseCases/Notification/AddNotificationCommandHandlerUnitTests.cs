@@ -12,8 +12,8 @@ namespace Planorama.Notification.Core.UnitTests.UseCases.Notification
     public class AddNotificationCommandHandlerUnitTests
     {
         private readonly AddNotificationCommandHandler addNotificationCommandHandler;
-        private IAddNotificationRepository addNotificationRepositoryMock = Substitute.For<IAddNotificationRepository>();
-        private IEventBus eventBusMock = Substitute.For<IEventBus>();
+        private readonly IAddNotificationRepository addNotificationRepositoryMock = Substitute.For<IAddNotificationRepository>();
+        private readonly IEventBus eventBusMock = Substitute.For<IEventBus>();
 
         public AddNotificationCommandHandlerUnitTests()
         {

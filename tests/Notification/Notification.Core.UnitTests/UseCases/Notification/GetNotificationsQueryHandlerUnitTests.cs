@@ -13,8 +13,8 @@ namespace Planorama.Notification.Core.UnitTests.UseCases.Notification
     public class GetNotificationsQueryHandlerUnitTests
     {
         private readonly GetNotificationsQueryHandler getNotificationsQueryHandler;
-        private IGetNotificationsRepository getNotificationsRepositoryMock = Substitute.For<IGetNotificationsRepository>();
-        private IUserContext userContextMock = Substitute.For<IUserContext>();
+        private readonly IGetNotificationsRepository getNotificationsRepositoryMock = Substitute.For<IGetNotificationsRepository>();
+        private readonly IUserContext userContextMock = Substitute.For<IUserContext>();
 
         public GetNotificationsQueryHandlerUnitTests()
         {

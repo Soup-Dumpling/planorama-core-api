@@ -13,7 +13,7 @@ namespace Planorama.User.Infrastructure.UnitTests.Repository.Authentication
     public class LogoutUserRepositoryUnitTests
     {
         private readonly UserDBContext context;
-        private LogoutUserRepository logoutUserRepository;
+        private readonly LogoutUserRepository logoutUserRepository;
 
         public LogoutUserRepositoryUnitTests()
         {

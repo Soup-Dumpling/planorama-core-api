@@ -11,7 +11,7 @@ namespace Planorama.Notification.Infrastructure.UnitTests.Repository.Notificatio
     public class GetNotificationsRepositoryUnitTests
     {
         private readonly NotificationContext context;
-        private GetNotificationsRepository getNotificationsRepository;
+        private readonly GetNotificationsRepository getNotificationsRepository;
 
         public GetNotificationsRepositoryUnitTests() 
         {

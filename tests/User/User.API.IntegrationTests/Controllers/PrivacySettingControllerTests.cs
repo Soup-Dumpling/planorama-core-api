@@ -14,14 +14,9 @@ using Xunit;
 namespace Planorama.User.API.IntegrationTests.Controllers
 {
     [Collection("Integration")]
-    public class PrivacySettingControllerTests
+    public class PrivacySettingControllerTests(AppFixture fixture)
     {
-        private readonly IAlbaHost host;
-
-        public PrivacySettingControllerTests(AppFixture fixture) 
-        {
-            host = fixture.Host;
-        }
+        private readonly IAlbaHost host = fixture.Host;
 
         [Fact]
         public async Task ValidPrivacySettingGet()

@@ -15,8 +15,8 @@ namespace Planorama.User.Core.UnitTests.UseCases.Authentication
     public class LoginUserCommandHandlerUnitTests
     {
         private readonly LoginUserCommandHandler loginUserCommandHandler;
-        private IJwtService jwtServiceMock = Substitute.For<IJwtService>();
-        private ILoginUserRepository loginUserRepositoryMock = Substitute.For<ILoginUserRepository>();
+        private readonly IJwtService jwtServiceMock = Substitute.For<IJwtService>();
+        private readonly ILoginUserRepository loginUserRepositoryMock = Substitute.For<ILoginUserRepository>();
 
         public LoginUserCommandHandlerUnitTests()
         {

@@ -16,9 +16,9 @@ namespace Planorama.User.Core.UnitTests.UseCases.Authentication
     public class RefreshTokensCommandHandlerUnitTests
     {
         private readonly RefreshTokensCommandHandler refreshTokensCommandHandler;
-        private IJwtService jwtServiceMock = Substitute.For<IJwtService>();
-        private IUserContext userContextMock = Substitute.For<IUserContext>();
-        private IRefreshTokensRepository refreshTokensRepositoryMock = Substitute.For<IRefreshTokensRepository>();
+        private readonly IJwtService jwtServiceMock = Substitute.For<IJwtService>();
+        private readonly IUserContext userContextMock = Substitute.For<IUserContext>();
+        private readonly IRefreshTokensRepository refreshTokensRepositoryMock = Substitute.For<IRefreshTokensRepository>();
 
         public RefreshTokensCommandHandlerUnitTests()
         {

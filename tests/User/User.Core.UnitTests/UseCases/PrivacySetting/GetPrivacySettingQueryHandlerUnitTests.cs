@@ -13,8 +13,8 @@ namespace Planorama.User.Core.UnitTests.UseCases.PrivacySetting
     public class GetPrivacySettingQueryHandlerUnitTests
     {
         private readonly GetPrivacySettingQueryHandler getPrivacySettingQueryHandler;
-        private IGetPrivacySettingRepository getPrivacySettingRepositoryMock = Substitute.For<IGetPrivacySettingRepository>();
-        private IUserContext userContextMock = Substitute.For<IUserContext>();
+        private readonly IGetPrivacySettingRepository getPrivacySettingRepositoryMock = Substitute.For<IGetPrivacySettingRepository>();
+        private readonly IUserContext userContextMock = Substitute.For<IUserContext>();
 
         public GetPrivacySettingQueryHandlerUnitTests()
         {

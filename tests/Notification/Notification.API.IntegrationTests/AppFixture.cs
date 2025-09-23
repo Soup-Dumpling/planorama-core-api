@@ -18,7 +18,7 @@ namespace Planorama.Notification.API.IntegrationTests
     public class AppFixture : IDisposable, IAsyncLifetime
     {
         public IAlbaHost Host { get; private set; }
-        private readonly InMemoryDatabaseRoot _dbRoot = new InMemoryDatabaseRoot();
+        private readonly InMemoryDatabaseRoot _dbRoot = new();
         public void Dispose()
         {
             Host?.Dispose();
