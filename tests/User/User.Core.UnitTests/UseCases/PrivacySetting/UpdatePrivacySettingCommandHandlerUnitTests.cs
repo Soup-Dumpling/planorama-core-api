@@ -12,8 +12,8 @@ namespace Planorama.User.Core.UnitTests.UseCases.PrivacySetting
     public class UpdatePrivacySettingCommandHandlerUnitTests
     {
         private readonly UpdatePrivacySettingCommandHandler updatePrivacySettingCommandHandler;
-        private IUpdatePrivacySettingRepository updatePrivacySettingRepositoryMock = Substitute.For<IUpdatePrivacySettingRepository>();
-        private IUserContext userContextMock = Substitute.For<IUserContext>();
+        private readonly IUpdatePrivacySettingRepository updatePrivacySettingRepositoryMock = Substitute.For<IUpdatePrivacySettingRepository>();
+        private readonly IUserContext userContextMock = Substitute.For<IUserContext>();
 
         public UpdatePrivacySettingCommandHandlerUnitTests()
         {
@@ -29,7 +29,7 @@ namespace Planorama.User.Core.UnitTests.UseCases.PrivacySetting
             userContextMock.UserName.Returns("user.testing@outlook.com");
             updatePrivacySettingRepositoryMock.CheckIfUserExists(Arg.Any<Guid>()).Returns(Task.FromResult(true));
             updatePrivacySettingRepositoryMock.GetUserIdByEmailAsync(Arg.Any<string>()).Returns(command.UserId);
-            updatePrivacySettingRepositoryMock.UpdatePrivacySettingAsync(Arg.Any<Guid>(), Arg.Any<bool>(), Arg.Any<string>()).Returns(privacySettingUpdatedEvent);
+            updatePrivacySettingRepositoryMock.UpdatePrivacySettingAsync(Arg.Any<Guid>(), Arg.Any<bool>(), Arg.Any<string>()).Returns(Task.FromResult(privacySettingUpdatedEvent));
 
             //Act
             await updatePrivacySettingCommandHandler.Handle(command, CancellationToken.None);

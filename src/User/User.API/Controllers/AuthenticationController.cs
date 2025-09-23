@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Planorama.User.API.Models.Authentication;
-using Planorama.User.Core.UseCases.Authentication.RegisterUser;
 using Planorama.User.Core.UseCases.Authentication.LoginUser;
-using Planorama.User.Core.UseCases.Authentication.RefreshTokens;
 using Planorama.User.Core.UseCases.Authentication.LogoutUser;
+using Planorama.User.Core.UseCases.Authentication.RefreshTokens;
+using Planorama.User.Core.UseCases.Authentication.RegisterUser;
 using System;
 using System.Threading.Tasks;
 
@@ -22,7 +22,7 @@ namespace Planorama.User.API.Controllers
         public AuthenticationController(ILogger<AuthenticationController> logger, IMediator mediator)
         {
             this.logger = logger;
-            this.mediator = mediator;
+            this.mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
         [AllowAnonymous]

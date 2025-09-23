@@ -14,7 +14,7 @@ namespace Planorama.User.Infrastructure.UnitTests.Repository.Authentication
     public class RefreshTokensRepositoryUnitTests
     {
         private readonly UserDBContext context;
-        private RefreshTokensRepository refreshTokensRepository;
+        private readonly RefreshTokensRepository refreshTokensRepository;
 
         public RefreshTokensRepositoryUnitTests()
         {

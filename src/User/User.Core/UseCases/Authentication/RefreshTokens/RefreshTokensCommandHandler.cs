@@ -24,17 +24,17 @@ namespace Planorama.User.Core.UseCases.Authentication.RefreshTokens
             this.userContext = userContext;
         }
 
-        public async Task Handle(RefreshTokensCommand command, CancellationToken cancellationToken)
+        public async Task Handle(RefreshTokensCommand request, CancellationToken cancellationToken)
         {
             var errors = new Dictionary<string, string[]>();
             if (!userContext.IsLoggedIn())
             {
                 throw new AuthorizationException();
             }
-            var userCredential = await refreshTokensRepository.FindUserCredentialByRefreshTokenAsync(command.RefreshToken);
+            var userCredential = await refreshTokensRepository.FindUserCredentialByRefreshTokenAsync(request.RefreshToken);
             if (userCredential == null)
             {
-                errors.Add("refreshToken", new string[] { "Unable to retrieve user for refresh token." });
+                errors.Add("refreshToken", new string[] { "Refresh token is invalid." });
                 throw new RefreshTokenException(errors);
             }
 

@@ -15,7 +15,7 @@ namespace Planorama.User.Core.UnitTests.UseCases.Authentication
     public class RegisterUserCommandHandlerUnitTests
     {
         private readonly RegisterUserCommandHandler registerUserCommandHandler;
-        private IRegisterUserRepository registerUserRepositoryMock = Substitute.For<IRegisterUserRepository>();
+        private readonly IRegisterUserRepository registerUserRepositoryMock = Substitute.For<IRegisterUserRepository>();
 
         public RegisterUserCommandHandlerUnitTests() 
         {

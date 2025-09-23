@@ -12,8 +12,8 @@ namespace Planorama.User.Core.UnitTests.UseCases.User
     public class GetLoggedInUserQueryHandlerUnitTests
     {
         private readonly GetLoggedInUserQueryHandler getLoggedInUserQueryHandler;
-        private IGetLoggedInUserRepository getLoggedInUserRepositoryMock = Substitute.For<IGetLoggedInUserRepository>();
-        private IUserContext userContextMock = Substitute.For<IUserContext>();
+        private readonly IGetLoggedInUserRepository getLoggedInUserRepositoryMock = Substitute.For<IGetLoggedInUserRepository>();
+        private readonly IUserContext userContextMock = Substitute.For<IUserContext>();
 
         public GetLoggedInUserQueryHandlerUnitTests()
         {

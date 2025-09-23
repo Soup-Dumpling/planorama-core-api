@@ -16,9 +16,9 @@ namespace Planorama.User.Core.UnitTests.UseCases.Authentication
     public class RefreshTokensCommandHandlerUnitTests
     {
         private readonly RefreshTokensCommandHandler refreshTokensCommandHandler;
-        private IJwtService jwtServiceMock = Substitute.For<IJwtService>();
-        private IUserContext userContextMock = Substitute.For<IUserContext>();
-        private IRefreshTokensRepository refreshTokensRepositoryMock = Substitute.For<IRefreshTokensRepository>();
+        private readonly IJwtService jwtServiceMock = Substitute.For<IJwtService>();
+        private readonly IUserContext userContextMock = Substitute.For<IUserContext>();
+        private readonly IRefreshTokensRepository refreshTokensRepositoryMock = Substitute.For<IRefreshTokensRepository>();
 
         public RefreshTokensCommandHandlerUnitTests()
         {
@@ -42,7 +42,7 @@ namespace Planorama.User.Core.UnitTests.UseCases.Authentication
             var refreshToken = "nvBhkx2Pfm633TYf56by974P0al2JLhjZ1ch324auT6Jn9dIAerWQNJCthZ05KguFymxZ0QBfeeaMP3IlYt1HQ==";
             jwtServiceMock.GenerateRefreshToken().Returns(refreshToken);
             var tokensUpdatedEvent = new TokensUpdatedEvent(userCredential.UserId, refreshToken, DateTime.UtcNow.AddDays(7));
-            refreshTokensRepositoryMock.UpdateRefreshTokenAsync(Arg.Any<Guid>(), Arg.Any<string>(), Arg.Any<DateTime>(), Arg.Any<string>()).Returns(tokensUpdatedEvent);
+            refreshTokensRepositoryMock.UpdateRefreshTokenAsync(Arg.Any<Guid>(), Arg.Any<string>(), Arg.Any<DateTime>(), Arg.Any<string>()).Returns(Task.FromResult(tokensUpdatedEvent));
             jwtServiceMock.WriteAccessAndRefreshTokensAsHttpOnlyCookie(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
             jwtServiceMock.WriteAccessAndRefreshTokensAsHttpOnlyCookie(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
 

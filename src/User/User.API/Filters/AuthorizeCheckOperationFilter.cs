@@ -8,8 +8,10 @@ namespace Planorama.User.API.Filters
     {
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {
+            operation.Responses.Add("400", new OpenApiResponse { Description = "Bad Request" });
             operation.Responses.Add("401", new OpenApiResponse { Description = "Unauthorized" });
             operation.Responses.Add("403", new OpenApiResponse { Description = "Forbidden" });
+            operation.Responses.Add("404", new OpenApiResponse { Description = "Not Found" });
             operation.Security = new List<OpenApiSecurityRequirement>
             {
                 new OpenApiSecurityRequirement

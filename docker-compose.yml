@@ -29,3 +29,18 @@ services:
     ports:
       - "80"
       - "5001:443"
+  notification.api:
+    image: notification.api
+    depends_on:
+      - rabbitmq
+      - sqldata
+    build:
+      context: .
+      dockerfile: src/Notification/Notification.API/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - EventBusConnection=rabbitmq
+    ports:
+      - "80"
+      - "5002:443"

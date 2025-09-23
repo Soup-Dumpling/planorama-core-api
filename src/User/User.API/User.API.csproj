@@ -9,6 +9,9 @@
 		<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
 	</PropertyGroup>
 	<ItemGroup>
+		<PackageReference Include="FluentValidation" Version="12.0.0" />
+		<PackageReference Include="MediatR" Version="12.5.0" />
+		<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.17" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.6">
 			<PrivateAssets>all</PrivateAssets>
@@ -16,11 +19,8 @@
 		</PackageReference>
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.2" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.1" />
-		<PackageReference Include="FluentValidation" Version="12.0.0" />
-		<PackageReference Include="MediatR" Version="12.5.0" />
-		<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
 		<PackageReference Include="NSubstitute" Version="5.3.0" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.1" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\Integration\Planorama.Integration.MessageBroker.RabbitMq\Planorama.Integration.MessageBroker.RabbitMq.csproj" />

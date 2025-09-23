@@ -1,5 +1,6 @@
 ﻿using FizzWare.NBuilder;
 using Microsoft.EntityFrameworkCore;
+using Models = Planorama.User.Core.Models;
 using Planorama.User.Core.UseCases.Authentication.RegisterUser;
 using Planorama.User.Infrastructure.Repository.Authentication;
 using System;
@@ -8,14 +9,13 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
-using Models = Planorama.User.Core.Models;
 
 namespace Planorama.User.Infrastructure.UnitTests.Repository.Authentication
 {
     public class RegisterUserRepositoryUnitTests
     {
         private readonly UserDBContext context;
-        private RegisterUserRepository registerUserRepository;
+        private readonly RegisterUserRepository registerUserRepository;
 
         public RegisterUserRepositoryUnitTests() 
         {

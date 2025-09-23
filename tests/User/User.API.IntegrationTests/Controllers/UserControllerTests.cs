@@ -13,14 +13,9 @@ using Xunit;
 namespace Planorama.User.API.IntegrationTests.Controllers
 {
     [Collection("Integration")]
-    public class UserControllerTests
+    public class UserControllerTests(AppFixture fixture)
     {
-        private readonly IAlbaHost host;
-
-        public UserControllerTests(AppFixture fixture) 
-        {
-            host = fixture.Host;
-        }
+        private readonly IAlbaHost host = fixture.Host;
 
         [Fact]
         public async Task ValidLoggedInUserGet()

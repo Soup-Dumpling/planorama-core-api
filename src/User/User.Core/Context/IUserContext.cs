@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Planorama.User.Core.Context
+﻿namespace Planorama.User.Core.Context
 {
     public interface IUserContext
     {
