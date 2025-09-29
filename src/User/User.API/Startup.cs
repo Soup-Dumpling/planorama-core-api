@@ -101,37 +101,40 @@ namespace Planorama.User.API
                     {
                         context.Token = context.Request.Cookies["ACCESS_TOKEN"];
                         return Task.CompletedTask;
+                    },
+                    OnTokenValidated = context =>
+                    {
+                        context.Request.Headers.Remove("Authorization");
+                        return Task.CompletedTask;
                     }
                 };
             });
 
-            services.AddAuthorization(opt =>
-            {
-                opt.AddPolicy(Constants.Policies.UserPolicy, policy =>
+            services.AddAuthorizationBuilder()
+                .AddPolicy(Constants.Policies.UserPolicy, policy =>
                 {
                     policy.RequireAuthenticatedUser();
                     policy.RequireAssertion(c => c.User.Claims.Any(x => x.Type == "scope" && x.Value.Contains("planorama-api")));
                     policy.RequireRole(Roles.UserRole, Roles.MemberRole, Roles.ModeratorRole, Roles.AdminRole);
-                });
-                opt.AddPolicy(Constants.Policies.MemberPolicy, policy =>
+                })
+                .AddPolicy(Constants.Policies.MemberPolicy, policy =>
                 {
                     policy.RequireAuthenticatedUser();
                     policy.RequireAssertion(c => c.User.Claims.Any(x => x.Type == "scope" && x.Value.Contains("planorama-api")));
                     policy.RequireRole(Roles.MemberRole, Roles.ModeratorRole, Roles.AdminRole);
-                });
-                opt.AddPolicy(Constants.Policies.ModeratorPolicy, policy =>
+                })
+                .AddPolicy(Constants.Policies.ModeratorPolicy, policy =>
                 {
                     policy.RequireAuthenticatedUser();
                     policy.RequireAssertion(c => c.User.Claims.Any(x => x.Type == "scope" && x.Value.Contains("planorama-api")));
                     policy.RequireRole(Roles.ModeratorRole, Roles.AdminRole);
-                });
-                opt.AddPolicy(Constants.Policies.AdminPolicy, policy =>
+                })
+                .AddPolicy(Constants.Policies.AdminPolicy, policy =>
                 {
                     policy.RequireAuthenticatedUser();
                     policy.RequireAssertion(c => c.User.Claims.Any(x => x.Type == "scope" && x.Value.Contains("planorama-api")));
                     policy.RequireRole(Roles.AdminRole);
                 });
-            });
 
             services.AddHealthChecks();
             services.AddHttpContextAccessor();

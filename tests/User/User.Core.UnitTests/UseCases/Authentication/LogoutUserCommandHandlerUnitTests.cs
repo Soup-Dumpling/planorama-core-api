@@ -39,7 +39,7 @@ namespace Planorama.User.Core.UnitTests.UseCases.Authentication
             Assert.NotEqual(string.Empty, result);
             await logoutUserRepositoryMock.Received().CheckIfUserCredentialExistsAsync(command.UserId);
             await logoutUserRepositoryMock.Received().ReplaceUserCredentialAsync(command.UserId, "user.testing@outlook.com");
-            jwtServiceMock.Received().ExpireTokensFromHttpOnlyCookie();
+            jwtServiceMock.Received().RevokeTokens();
         }
 
         [Fact]
@@ -53,7 +53,7 @@ namespace Planorama.User.Core.UnitTests.UseCases.Authentication
             await Assert.ThrowsAsync<NotFoundException>(async () => await logoutUserCommandHandler.Handle(command, CancellationToken.None));
             await logoutUserRepositoryMock.Received().CheckIfUserCredentialExistsAsync(command.UserId);
             await logoutUserRepositoryMock.DidNotReceive().ReplaceUserCredentialAsync(Arg.Any<Guid>(), Arg.Any<string>());
-            jwtServiceMock.DidNotReceive().ExpireTokensFromHttpOnlyCookie();
+            jwtServiceMock.DidNotReceive().RevokeTokens();
         }
 
         [Fact]
@@ -70,7 +70,7 @@ namespace Planorama.User.Core.UnitTests.UseCases.Authentication
             await Assert.ThrowsAsync<AuthorizationException>(async () => await logoutUserCommandHandler.Handle(command, CancellationToken.None));
             await logoutUserRepositoryMock.Received().CheckIfUserCredentialExistsAsync(command.UserId);
             await logoutUserRepositoryMock.Received().ReplaceUserCredentialAsync(command.UserId, "user.testing@outlook.com");
-            jwtServiceMock.DidNotReceive().ExpireTokensFromHttpOnlyCookie();
+            jwtServiceMock.DidNotReceive().RevokeTokens();
         }
     }
 }

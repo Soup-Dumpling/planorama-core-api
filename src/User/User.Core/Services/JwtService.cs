@@ -73,7 +73,7 @@ namespace Planorama.User.Core.Services
             });
         }
 
-        public void ExpireTokensFromHttpOnlyCookie()
+        public void RevokeTokens()
         {
             foreach(var cookie in httpContextAccessor.HttpContext.Request.Cookies.Keys)
             {

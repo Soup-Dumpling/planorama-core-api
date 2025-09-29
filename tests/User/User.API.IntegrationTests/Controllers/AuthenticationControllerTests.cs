@@ -120,6 +120,11 @@ namespace Planorama.User.API.IntegrationTests.Controllers
             //Assert
             var result = response.ReadAsJson<string>();
             Assert.NotEqual(result, string.Empty);
+            Assert.True(response.Context.Response.Headers.ContainsKey("Set-Cookie"));
+            var accessToken = response.Context.Response.Headers.SetCookie.FirstOrDefault(x => x.StartsWith("ACCESS_TOKEN"));
+            Assert.NotNull(accessToken);
+            var refreshToken = response.Context.Response.Headers.SetCookie.FirstOrDefault(x => x.StartsWith("REFRESH_TOKEN"));
+            Assert.NotNull(refreshToken);
 
             var loggedInUserResponse = await host.Scenario(_ =>
             {
@@ -179,23 +184,17 @@ namespace Planorama.User.API.IntegrationTests.Controllers
                 await context.SaveChangesAsync();
             });
 
-            var request = Builder<RefreshTokensRequest>.CreateNew()
-                .Do(x =>
-                {
-                    x.RefreshToken = "Hw4y06bskqzxz4YIYoYFp8xcqw+p6hyonncU7hyamWkL/seWkibsPMnMH1nMVo4rDaAyHD9a+mUGYkRvNwPlOA==";
-                }).Build();
-
             //Act
             var response = await host.Scenario(_ =>
             {
-                _.WithClaim(new Claim("email", "testEmail@test.com"));
-                _.WithClaim(new Claim("role", Roles.UserRole));
-                _.Post.Json(request).ToUrl("/api/authentication/refresh");
+                _.WithRequestHeader("Cookie", $"REFRESH_TOKEN={fakeUserCredential.RefreshToken}");
+                _.Post.Url("/api/authentication/refresh");
                 _.StatusCodeShouldBeOk();
             });
 
             //Assert
-            var result = response.Context.Response.Headers["Set-Cookie"].LastOrDefault();
+            var result = response.Context.Response.Headers.SetCookie.LastOrDefault();
+            Assert.NotNull(result);
             Assert.DoesNotContain(fakeUserCredential.RefreshToken, result);
         }
 

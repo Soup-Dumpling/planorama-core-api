@@ -24,7 +24,6 @@ namespace Planorama.User.API.IntegrationTests
         }
 
         [Theory]
-        [InlineData("/api/authentication/refresh")]
         [InlineData("/api/authentication/logout")]
         public async Task PostWithNoRoleReturnsForbidden(string url)
         {
