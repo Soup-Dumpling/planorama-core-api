@@ -36,7 +36,7 @@ namespace Planorama.User.Core.UseCases.Authentication.LogoutUser
             {
                 throw new AuthorizationException();
             }
-            jwtService.ExpireTokensFromHttpOnlyCookie();
+            jwtService.RevokeTokens();
             return $"User with Id: {result.Id} successfully logged out.";
         }
     }

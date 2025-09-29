@@ -43,10 +43,11 @@ namespace Planorama.User.API.Controllers
             return response;
         }
 
+        [AllowAnonymous]
         [HttpPost("refresh")]
-        public async Task RefreshTokens([FromBody] RefreshTokensRequest model)
+        public async Task RefreshTokens()
         {
-            var request = new RefreshTokensCommand(model.RefreshToken);
+            var request = new RefreshTokensCommand();
             await mediator.Send(request);
         }
 

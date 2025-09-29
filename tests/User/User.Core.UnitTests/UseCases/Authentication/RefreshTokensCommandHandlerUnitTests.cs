@@ -1,4 +1,5 @@
 ﻿using NSubstitute;
+using NSubstitute.ReturnsExtensions;
 using Planorama.User.Core.Context;
 using Planorama.User.Core.Exceptions;
 using Planorama.User.Core.Models;
@@ -29,10 +30,11 @@ namespace Planorama.User.Core.UnitTests.UseCases.Authentication
         public async Task ValidCommand()
         {
             //Arrange
-            var command = new RefreshTokensCommand("WTkh8E7Zgq/l8sqs7yaCUnWXROXyBejV5khykyZlZzoYrGiulKGNqWcwRX5u/WUxWEeXt4M2QeMcImWbw8PlSA==");
-            userContextMock.IsLoggedIn().Returns(true);
+            var command = new RefreshTokensCommand();
+            var refreshTokenCookieValue = "WTkh8E7Zgq/l8sqs7yaCUnWXROXyBejV5khykyZlZzoYrGiulKGNqWcwRX5u/WUxWEeXt4M2QeMcImWbw8PlSA==";
             userContextMock.UserName.Returns("user.testing@outlook.com");
-            var userCredential = new UserCredential() { UserId = Guid.NewGuid(), EmailAddress = "user.testing@outlook.com", HashedPassword = "AQAAAAIAAYagAAAAEON9dR34Gs2mNIsbIL5sClwRZN+NnZtuKc1wVHHipo5H9IgKj04vx22XV49i08wMwg==", RefreshToken = command.RefreshToken, RefreshTokenExpiresAtUtc = DateTime.UtcNow.AddDays(7) };
+            userContextMock.RefreshToken.Returns(refreshTokenCookieValue);
+            var userCredential = new UserCredential() { UserId = Guid.NewGuid(), EmailAddress = "user.testing@outlook.com", HashedPassword = "AQAAAAIAAYagAAAAEON9dR34Gs2mNIsbIL5sClwRZN+NnZtuKc1wVHHipo5H9IgKj04vx22XV49i08wMwg==", RefreshToken = refreshTokenCookieValue, RefreshTokenExpiresAtUtc = DateTime.UtcNow.AddDays(7) };
             refreshTokensRepositoryMock.FindUserCredentialByRefreshTokenAsync(Arg.Any<string>()).Returns(Task.FromResult(userCredential));
             refreshTokensRepositoryMock.GetUserFullNameByIdAsync(Arg.Any<Guid>()).Returns(Task.FromResult("firstName lastName"));
             var roles = new List<string>() { "planorama.user" };
@@ -50,7 +52,7 @@ namespace Planorama.User.Core.UnitTests.UseCases.Authentication
             await refreshTokensCommandHandler.Handle(command, CancellationToken.None);
 
             //Assert
-            await refreshTokensRepositoryMock.Received().FindUserCredentialByRefreshTokenAsync(command.RefreshToken);
+            await refreshTokensRepositoryMock.Received().FindUserCredentialByRefreshTokenAsync(refreshTokenCookieValue);
             await refreshTokensRepositoryMock.Received().GetUserFullNameByIdAsync(userCredential.UserId);
             await refreshTokensRepositoryMock.Received().GetUserRolesByIdAsync(userCredential.UserId);
             jwtServiceMock.Received().GenerateJwtToken(userCredential, "firstName lastName", Arg.Is<IEnumerable<string>>(x => x.Count() == 1 && x.First() == Constants.Roles.UserRole));
@@ -61,14 +63,14 @@ namespace Planorama.User.Core.UnitTests.UseCases.Authentication
         }
 
         [Fact]
-        public async Task UserNotLoggedIn()
+        public async Task MissingRefreshToken()
         {
             //Arrange
-            var command = new RefreshTokensCommand("WTkh8E7Zgq/l8sqs7yaCUnWXROXyBejV5khykyZlZzoYrGiulKGNqWcwRX5u/WUxWEeXt4M2QeMcImWbw8PlSA==");
-            userContextMock.IsLoggedIn().Returns(false);
+            var command = new RefreshTokensCommand();
+            userContextMock.RefreshToken.ReturnsNull();
 
             //Act and Assert
-            await Assert.ThrowsAsync<AuthorizationException>(async () => await refreshTokensCommandHandler.Handle(command, CancellationToken.None));
+            await Assert.ThrowsAsync<RefreshTokenException>(async () => await refreshTokensCommandHandler.Handle(command, CancellationToken.None));
             await refreshTokensRepositoryMock.DidNotReceive().FindUserCredentialByRefreshTokenAsync(Arg.Any<string>());
             await refreshTokensRepositoryMock.DidNotReceive().GetUserFullNameByIdAsync(Arg.Any<Guid>());
             await refreshTokensRepositoryMock.DidNotReceive().GetUserRolesByIdAsync(Arg.Any<Guid>());
@@ -80,16 +82,17 @@ namespace Planorama.User.Core.UnitTests.UseCases.Authentication
         }
 
         [Fact]
-        public async Task UserCredentialDoesNotExist()
+        public async Task InvalidRefreshToken()
         {
             //Arrange
-            var command = new RefreshTokensCommand("WTkh8E7Zgq/l8sqs7yaCUnWXROXyBejV5khykyZlZzoYrGiulKGNqWcwRX5u/WUxWEeXt4M2QeMcImWbw8PlSA==");
-            userContextMock.IsLoggedIn().Returns(true);
+            var command = new RefreshTokensCommand();
+            var refreshTokenCookieValue = "WTkh8E7Zgq/l8sqs7yaCUnWXROXyBejV5khykyZlZzoYrGiulKGNqWcwRX5u/WUxWEeXt4M2QeMcImWbw8PlSA==";
+            userContextMock.RefreshToken.Returns(refreshTokenCookieValue);
             refreshTokensRepositoryMock.FindUserCredentialByRefreshTokenAsync(Arg.Any<string>()).Returns(Task.FromResult(null as UserCredential));
 
             //Act and Assert
             await Assert.ThrowsAsync<RefreshTokenException>(async () => await refreshTokensCommandHandler.Handle(command, CancellationToken.None));
-            await refreshTokensRepositoryMock.Received().FindUserCredentialByRefreshTokenAsync(command.RefreshToken);
+            await refreshTokensRepositoryMock.Received().FindUserCredentialByRefreshTokenAsync(refreshTokenCookieValue);
             await refreshTokensRepositoryMock.DidNotReceive().GetUserFullNameByIdAsync(Arg.Any<Guid>());
             await refreshTokensRepositoryMock.DidNotReceive().GetUserRolesByIdAsync(Arg.Any<Guid>());
             jwtServiceMock.DidNotReceive().GenerateJwtToken(Arg.Any<UserCredential>(), Arg.Any<string>(), Arg.Any<IEnumerable<string>>());
@@ -103,14 +106,15 @@ namespace Planorama.User.Core.UnitTests.UseCases.Authentication
         public async Task RefreshTokenExpired()
         {
             //Arrange
-            var command = new RefreshTokensCommand("WTkh8E7Zgq/l8sqs7yaCUnWXROXyBejV5khykyZlZzoYrGiulKGNqWcwRX5u/WUxWEeXt4M2QeMcImWbw8PlSA==");
-            userContextMock.IsLoggedIn().Returns(true);
-            var userCredential = new UserCredential() { UserId = Guid.NewGuid(), EmailAddress = "user.testing@outlook.com", HashedPassword = "AQAAAAIAAYagAAAAEON9dR34Gs2mNIsbIL5sClwRZN+NnZtuKc1wVHHipo5H9IgKj04vx22XV49i08wMwg==", RefreshToken = command.RefreshToken, RefreshTokenExpiresAtUtc = DateTime.UtcNow.AddDays(-1) };
+            var command = new RefreshTokensCommand();
+            var refreshTokenCookieValue = "WTkh8E7Zgq/l8sqs7yaCUnWXROXyBejV5khykyZlZzoYrGiulKGNqWcwRX5u/WUxWEeXt4M2QeMcImWbw8PlSA==";
+            userContextMock.RefreshToken.Returns(refreshTokenCookieValue);
+            var userCredential = new UserCredential() { UserId = Guid.NewGuid(), EmailAddress = "user.testing@outlook.com", HashedPassword = "AQAAAAIAAYagAAAAEON9dR34Gs2mNIsbIL5sClwRZN+NnZtuKc1wVHHipo5H9IgKj04vx22XV49i08wMwg==", RefreshToken = refreshTokenCookieValue, RefreshTokenExpiresAtUtc = DateTime.UtcNow.AddDays(-1) };
             refreshTokensRepositoryMock.FindUserCredentialByRefreshTokenAsync(Arg.Any<string>()).Returns(Task.FromResult(userCredential));
 
             //Act and Assert
             await Assert.ThrowsAsync<RefreshTokenException>(async () => await refreshTokensCommandHandler.Handle(command, CancellationToken.None));
-            await refreshTokensRepositoryMock.Received().FindUserCredentialByRefreshTokenAsync(command.RefreshToken);
+            await refreshTokensRepositoryMock.Received().FindUserCredentialByRefreshTokenAsync(refreshTokenCookieValue);
             await refreshTokensRepositoryMock.DidNotReceive().GetUserFullNameByIdAsync(Arg.Any<Guid>());
             await refreshTokensRepositoryMock.DidNotReceive().GetUserRolesByIdAsync(Arg.Any<Guid>());
             jwtServiceMock.DidNotReceive().GenerateJwtToken(Arg.Any<UserCredential>(), Arg.Any<string>(), Arg.Any<IEnumerable<string>>());

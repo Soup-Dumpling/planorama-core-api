@@ -27,11 +27,12 @@ namespace Planorama.User.Core.UseCases.Authentication.RefreshTokens
         public async Task Handle(RefreshTokensCommand request, CancellationToken cancellationToken)
         {
             var errors = new Dictionary<string, string[]>();
-            if (!userContext.IsLoggedIn())
+            if (string.IsNullOrEmpty(userContext.RefreshToken))
             {
-                throw new AuthorizationException();
+                errors.Add("refreshToken", new string[] { "Refresh token is missing." });
+                throw new RefreshTokenException(errors);
             }
-            var userCredential = await refreshTokensRepository.FindUserCredentialByRefreshTokenAsync(request.RefreshToken);
+            var userCredential = await refreshTokensRepository.FindUserCredentialByRefreshTokenAsync(userContext.RefreshToken);
             if (userCredential == null)
             {
                 errors.Add("refreshToken", new string[] { "Refresh token is invalid." });
